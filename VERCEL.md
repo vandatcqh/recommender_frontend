@@ -5,9 +5,11 @@ Repo này **chỉ chứa frontend**. Backend chạy trên server riêng.
 ## Cách hoạt động
 
 ```
-https://xxx.vercel.app/api/*  →  proxy  →  http://<server>:8000/api/*
-https://xxx.vercel.app/*      →  React SPA
+Browser → https://xxx.vercel.app/api/*  →  Vercel serverless proxy  →  http://<server>:8000/api/*
+Browser → https://xxx.vercel.app/*      →  React SPA
 ```
+
+Serverless proxy (`api/[...path].js`) hỗ trợ POST (đăng nhập, đăng ký) — rewrite trực tiếp trên Vercel thường bị 405.
 
 ## Bước deploy
 
