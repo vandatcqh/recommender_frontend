@@ -7,6 +7,11 @@ function formatDate(value) {
   return new Date(value).toLocaleString('vi-VN');
 }
 
+function formatMrr(value) {
+  if (value === null || value === undefined) return '—';
+  return Number(value).toFixed(4);
+}
+
 function TimelineItem({ item }) {
   if (item.type === 'rating') {
     return (
@@ -143,6 +148,7 @@ export default function AdminActivityPanel() {
                 <th className="px-3 py-2 font-semibold text-muted text-right">⭐</th>
                 <th className="px-3 py-2 font-semibold text-muted text-right">✨</th>
                 <th className="px-3 py-2 font-semibold text-muted text-right">♥</th>
+                <th className="px-3 py-2 font-semibold text-muted text-right">MRR</th>
               </tr>
             </thead>
             <tbody>
@@ -161,6 +167,7 @@ export default function AdminActivityPanel() {
                   <td className="px-3 py-2.5 text-right text-muted">{user.rating_count}</td>
                   <td className="px-3 py-2.5 text-right text-muted">{user.recommendation_sessions}</td>
                   <td className="px-3 py-2.5 text-right text-muted">{user.likes}</td>
+                  <td className="px-3 py-2.5 text-right font-medium text-text">{formatMrr(user.mrr)}</td>
                 </tr>
               ))}
             </tbody>
@@ -170,7 +177,7 @@ export default function AdminActivityPanel() {
           )}
         </div>
         <p className="text-xs text-muted mt-2">
-          ⭐ đánh giá · ✨ lượt gợi ý · ♥ like trên gợi ý
+          ⭐ đánh giá · ✨ lượt gợi ý · ♥ like · MRR trung bình theo lượt gợi ý
         </p>
       </div>
 
@@ -188,7 +195,7 @@ export default function AdminActivityPanel() {
             <>
               <div className="mb-4 pb-4 border-b border-border">
                 <h2 className="text-lg font-bold text-text m-0">{detail.username}</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3 text-center">
                   <div className="rounded-xl bg-gray-50 p-2">
                     <div className="text-lg font-bold text-text">{detail.rating_count}</div>
                     <div className="text-xs text-muted">Đánh giá</div>
@@ -204,6 +211,10 @@ export default function AdminActivityPanel() {
                   <div className="rounded-xl bg-gray-50 p-2">
                     <div className="text-lg font-bold text-text">{detail.likes}</div>
                     <div className="text-xs text-muted">Like</div>
+                  </div>
+                  <div className="rounded-xl bg-purple-50 p-2">
+                    <div className="text-lg font-bold text-text">{formatMrr(detail.mrr)}</div>
+                    <div className="text-xs text-muted">MRR</div>
                   </div>
                 </div>
               </div>
