@@ -1,4 +1,4 @@
-const TARGET = (process.env.API_PROXY_TARGET || 'http://32.236.189.44:8000').replace(/\/$/, '');
+const TARGET = (process.env.API_PROXY_TARGET || 'http://3.26.158.53:8000').replace(/\/$/, '');
 
 export default async function handler(req, res) {
   const rawPath = req.query.path;
