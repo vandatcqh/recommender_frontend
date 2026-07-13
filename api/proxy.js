@@ -1,8 +1,8 @@
 const TARGET = (process.env.API_PROXY_TARGET || 'http://32.236.189.44:8000').replace(/\/$/, '');
 
-module.exports = async (req, res) => {
-  const pathParts = req.query.path;
-  const apiPath = Array.isArray(pathParts) ? pathParts.join('/') : (pathParts || '');
+export default async function handler(req, res) {
+  const rawPath = req.query.path;
+  const apiPath = Array.isArray(rawPath) ? rawPath.join('/') : (rawPath || '');
 
   const url = new URL(`${TARGET}/api/${apiPath}`);
   const q = new URLSearchParams(req.query);
@@ -20,12 +20,10 @@ module.exports = async (req, res) => {
   const method = req.method || 'GET';
   const init = { method, headers };
 
-  if (!['GET', 'HEAD'].includes(method)) {
-    if (req.body !== undefined && req.body !== null) {
-      init.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-      if (!headers['content-type'] && !headers['Content-Type']) {
-        headers['Content-Type'] = 'application/json';
-      }
+  if (!['GET', 'HEAD'].includes(method) && req.body != null) {
+    init.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    if (!headers['content-type'] && !headers['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
     }
   }
 
@@ -47,9 +45,9 @@ module.exports = async (req, res) => {
       error: String(err?.message || err),
     });
   }
-};
+}
 
-module.exports.config = {
+export const config = {
   api: {
     bodyParser: true,
   },
