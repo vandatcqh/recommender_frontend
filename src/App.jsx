@@ -8,11 +8,23 @@ import RecommendationsPage from './pages/RecommendationsPage';
 import AdminExportsPage from './pages/AdminExportsPage';
 import AdminRecommenderPage from './pages/AdminRecommenderPage';
 import AdminRecommenderMetricsPage from './pages/AdminRecommenderMetricsPage';
+import { isAdmin } from './lib/auth';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
   if (!token) {
     return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+function AdminRoute({ children }) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!isAdmin()) {
+    return <Navigate to="/home" replace />;
   }
   return children;
 }
@@ -65,8 +77,16 @@ export default function App() {
           element={<AdminRecommenderPage />}
         />
         <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminRecommenderMetricsPage />
+            </AdminRoute>
+          }
+        />
+        <Route
           path="/admin/recommender-metrics"
-          element={<AdminRecommenderMetricsPage />}
+          element={<Navigate to="/admin" replace />}
         />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

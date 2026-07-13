@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getRecommenderMetrics } from '../api';
-import { apiUrl } from '../api/config';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import Navbar from '../components/Navbar';
+import {
+  getRecommenderMetrics,
+  getRecommenderMetricsCsvBlob,
+  getRecommenderMetricsJsonBlob,
+} from '../api';
+import { downloadBlob } from '../lib/auth';
 
 const METRIC_LABELS = {
   users: 'Người dùng',
@@ -77,8 +84,10 @@ function MetricTable({ title, data, groupHead }) {
 }
 
 export default function AdminRecommenderMetricsPage() {
+  const navigate = useNavigate();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState('');
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -88,7 +97,10 @@ export default function AdminRecommenderMetricsPage() {
       const res = await getRecommenderMetrics();
       setMetrics(res.data);
     } catch (e) {
-      setError(e.message || 'Lỗi tải dữ liệu');
+      const msg = e.response?.status === 403
+        ? 'Bạn không có quyền admin'
+        : (e.message || 'Lỗi tải dữ liệu');
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -98,39 +110,81 @@ export default function AdminRecommenderMetricsPage() {
     load();
   }, [load]);
 
+  const handleExportJson = async () => {
+    try {
+      setExporting('json');
+      const res = await getRecommenderMetricsJsonBlob();
+      downloadBlob(res.data, 'recommender_metrics.json');
+      toast.success('Đã tải JSON');
+    } catch {
+      toast.error('Export JSON thất bại');
+    } finally {
+      setExporting('');
+    }
+  };
+
+  const handleExportCsv = async () => {
+    try {
+      setExporting('csv');
+      const res = await getRecommenderMetricsCsvBlob();
+      downloadBlob(res.data, 'recommender_metrics.csv');
+      toast.success('Đã tải CSV');
+    } catch {
+      toast.error('Export CSV thất bại');
+    } finally {
+      setExporting('');
+    }
+  };
+
   const overall = metrics?.overall;
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="sticky top-0 z-10 bg-white border-b border-border px-6 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-text m-0">Đánh giá recommender (top-K)</h1>
-        <div className="flex gap-2">
+      <Navbar />
+      <main className="max-w-6xl mx-auto px-4 py-6 page-enter">
+        <div className="flex items-center gap-3 mb-6">
           <button
-            type="button"
-            onClick={load}
-            className="px-4 py-2 rounded-xl border border-border bg-white text-sm font-medium cursor-pointer hover:bg-gray-50"
+            onClick={() => navigate('/home')}
+            className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer"
           >
-            ↻ Làm mới
+            <svg className="w-5 h-5 text-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
-          <a
-            href={apiUrl('/recommender/metrics?download=1')}
-            className="px-4 py-2 rounded-xl border border-border bg-white text-sm font-medium no-underline text-text hover:bg-gray-50"
-          >
-            ⬇ JSON
-          </a>
-          <a
-            href={apiUrl('/recommender/metrics.csv')}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold no-underline hover:opacity-90"
-          >
-            ⬇ CSV
-          </a>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-text m-0">Admin · Đánh giá recommender</h1>
+            <p className="text-sm text-muted mt-0.5">Metrics từ tương tác gợi ý (impression & like)</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={load}
+              disabled={loading}
+              className="px-4 py-2 rounded-xl border border-border bg-white text-sm font-medium cursor-pointer hover:bg-gray-50 disabled:opacity-50"
+            >
+              ↻ Làm mới
+            </button>
+            <button
+              type="button"
+              onClick={handleExportJson}
+              disabled={!!exporting}
+              className="px-4 py-2 rounded-xl border border-border bg-white text-sm font-medium cursor-pointer hover:bg-gray-50 disabled:opacity-50"
+            >
+              {exporting === 'json' ? '...' : '⬇ JSON'}
+            </button>
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              disabled={!!exporting}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold cursor-pointer hover:opacity-90 disabled:opacity-50 border-none"
+            >
+              {exporting === 'csv' ? '...' : '⬇ CSV'}
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
         <p className="text-sm text-muted mb-6">
           Chỉ số tính từ tương tác thật (impression khi bấm Gợi ý, like khi bấm ♥).
-          Like = nhãn liên quan (relevance) nhị phân.
         </p>
 
         {loading && (
@@ -138,7 +192,9 @@ export default function AdminRecommenderMetricsPage() {
         )}
 
         {error && (
-          <div className="text-center py-16 text-red-500">{error}</div>
+          <div className="text-center py-16 text-red-500 bg-white border border-border rounded-2xl">
+            {error}
+          </div>
         )}
 
         {!loading && !error && overall && !overall.sessions && (
@@ -177,7 +233,7 @@ export default function AdminRecommenderMetricsPage() {
             <MetricTable title="Theo ngữ cảnh (dịp | thời tiết)" data={metrics.byContext || {}} groupHead="Ngữ cảnh" />
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 }

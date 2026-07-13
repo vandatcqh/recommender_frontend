@@ -50,6 +50,12 @@ export const logRecommenderEvents = (events) =>
 
 export const getRecommenderMetrics = () => api.get('/recommender/metrics');
 
+export const getRecommenderMetricsJsonBlob = () =>
+  api.get('/recommender/metrics', { params: { download: 1 }, responseType: 'blob' });
+
+export const getRecommenderMetricsCsvBlob = () =>
+  api.get('/recommender/metrics.csv', { responseType: 'blob' });
+
 // --- Admin ---
 export const listRatingFiles = () => api.get('/ratings/files');
 

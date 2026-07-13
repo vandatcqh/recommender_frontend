@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { login, register } from '../api';
+import { setAuthSession } from '../lib/auth';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,18 +20,24 @@ export default function LoginPage() {
     try {
       if (isLogin) {
         const res = await login(username, password);
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('username', res.data.username);
-        localStorage.setItem('user_id', res.data.user_id);
+        setAuthSession({
+          token: res.data.token,
+          username: res.data.username,
+          userId: res.data.user_id,
+          isAdmin: res.data.is_admin,
+        });
         toast.success(`Chào mừng trở lại, ${res.data.username}! 👋`);
         navigate('/home');
       } else {
         await register(username, password);
         // Auto-login after register
         const res = await login(username, password);
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('username', res.data.username);
-        localStorage.setItem('user_id', res.data.user_id);
+        setAuthSession({
+          token: res.data.token,
+          username: res.data.username,
+          userId: res.data.user_id,
+          isAdmin: res.data.is_admin,
+        });
         toast.success('Đăng ký thành công! 🎉');
         navigate('/home');
       }

@@ -1,11 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getMe } from '../api';
+import { clearAuthSession, isAdmin } from '../lib/auth';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [admin, setAdmin] = useState(isAdmin());
   const username = localStorage.getItem('username') || 'User';
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    getMe()
+      .then((res) => {
+        const flag = !!res.data.is_admin;
+        localStorage.setItem('is_admin', flag ? '1' : '0');
+        setAdmin(flag);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -18,16 +33,13 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('user_id');
+    clearAuthSession();
     navigate('/login');
   };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-border">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/home" className="flex items-center gap-2 no-underline">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
             <span className="text-white text-lg">✦</span>
@@ -37,7 +49,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* User dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setOpen(!open)}
@@ -58,7 +69,9 @@ export default function Navbar() {
             <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-lg border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-sm font-semibold text-text">{username}</p>
-                <p className="text-xs text-muted">Thành viên StyleRate</p>
+                <p className="text-xs text-muted">
+                  {admin ? 'Quản trị viên' : 'Thành viên StyleRate'}
+                </p>
               </div>
               <div className="py-1">
                 <Link
@@ -77,6 +90,16 @@ export default function Navbar() {
                   <span>✨</span>
                   <span>Gợi ý sản phẩm</span>
                 </Link>
+                {admin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-text hover:bg-purple-50 transition-colors no-underline"
+                  >
+                    <span>📊</span>
+                    <span>Admin · Metrics</span>
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors border-none bg-transparent cursor-pointer"
