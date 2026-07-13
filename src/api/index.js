@@ -56,6 +56,11 @@ export const getRecommenderMetricsJsonBlob = () =>
 export const getRecommenderMetricsCsvBlob = () =>
   api.get('/recommender/metrics.csv', { responseType: 'blob' });
 
+export const getAdminUsers = () => api.get('/admin/users');
+
+export const updateAdminUser = (userId, isAdmin) =>
+  api.patch(`/admin/users/${userId}`, { is_admin: isAdmin });
+
 // --- Admin ---
 export const listRatingFiles = () => api.get('/ratings/files');
 

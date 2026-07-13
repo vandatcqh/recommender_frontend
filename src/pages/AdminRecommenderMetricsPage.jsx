@@ -8,6 +8,7 @@ import {
   getRecommenderMetricsJsonBlob,
 } from '../api';
 import { downloadBlob } from '../lib/auth';
+import AdminUsersPanel from '../components/AdminUsersPanel';
 
 const METRIC_LABELS = {
   users: 'Người dùng',
@@ -85,6 +86,7 @@ function MetricTable({ title, data, groupHead }) {
 
 export default function AdminRecommenderMetricsPage() {
   const navigate = useNavigate();
+  const [tab, setTab] = useState('metrics');
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState('');
@@ -152,9 +154,10 @@ export default function AdminRecommenderMetricsPage() {
             </svg>
           </button>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-text m-0">Admin · Đánh giá recommender</h1>
-            <p className="text-sm text-muted mt-0.5">Metrics từ tương tác gợi ý (impression & like)</p>
+            <h1 className="text-xl font-bold text-text m-0">Admin</h1>
+            <p className="text-sm text-muted mt-0.5">Metrics recommender & quản lý quyền admin</p>
           </div>
+          {tab === 'metrics' && (
           <div className="flex gap-2">
             <button
               type="button"
@@ -181,8 +184,38 @@ export default function AdminRecommenderMetricsPage() {
               {exporting === 'csv' ? '...' : '⬇ CSV'}
             </button>
           </div>
+          )}
         </div>
 
+        <div className="flex gap-2 mb-6">
+          <button
+            type="button"
+            onClick={() => setTab('metrics')}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold border cursor-pointer transition-colors ${
+              tab === 'metrics'
+                ? 'bg-gradient-to-r from-primary to-secondary text-white border-transparent'
+                : 'bg-white border-border text-text hover:bg-gray-50'
+            }`}
+          >
+            📊 Metrics
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('users')}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold border cursor-pointer transition-colors ${
+              tab === 'users'
+                ? 'bg-gradient-to-r from-primary to-secondary text-white border-transparent'
+                : 'bg-white border-border text-text hover:bg-gray-50'
+            }`}
+          >
+            👥 Quyền admin
+          </button>
+        </div>
+
+        {tab === 'users' && <AdminUsersPanel />}
+
+        {tab === 'metrics' && (
+        <>
         <p className="text-sm text-muted mb-6">
           Chỉ số tính từ tương tác thật (impression khi bấm Gợi ý, like khi bấm ♥).
         </p>
@@ -232,6 +265,8 @@ export default function AdminRecommenderMetricsPage() {
             <MetricTable title="Theo danh mục" data={metrics.byCategory || {}} groupHead="Danh mục" />
             <MetricTable title="Theo ngữ cảnh (dịp | thời tiết)" data={metrics.byContext || {}} groupHead="Ngữ cảnh" />
           </>
+        )}
+        </>
         )}
       </main>
     </div>
