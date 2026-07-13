@@ -61,6 +61,11 @@ export const getAdminUsers = () => api.get('/admin/users');
 export const updateAdminUser = (userId, isAdmin) =>
   api.patch(`/admin/users/${userId}`, { is_admin: isAdmin });
 
+export const getAdminUserActivity = () => api.get('/admin/user-activity');
+
+export const getAdminUserActivityDetail = (params) =>
+  api.get('/admin/user-activity/detail', { params });
+
 // --- Admin ---
 export const listRatingFiles = () => api.get('/ratings/files');
 

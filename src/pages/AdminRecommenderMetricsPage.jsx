@@ -10,9 +10,11 @@ import {
 import { downloadBlob } from '../lib/auth';
 import AdminUsersPanel from '../components/AdminUsersPanel';
 import AdminExportsPanel from '../components/AdminExportsPanel';
+import AdminActivityPanel from '../components/AdminActivityPanel';
 
 const ADMIN_TABS = [
   { id: 'metrics', label: '📊 Metrics' },
+  { id: 'activity', label: '📋 Hoạt động user' },
   { id: 'exports', label: '📁 Export ratings' },
   { id: 'users', label: '👥 Quyền admin' },
 ];
@@ -175,7 +177,7 @@ export default function AdminRecommenderMetricsPage() {
           </button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-text m-0">Admin</h1>
-            <p className="text-sm text-muted mt-0.5">Metrics, export ratings & quản lý quyền admin</p>
+            <p className="text-sm text-muted mt-0.5">Metrics, hoạt động user, export ratings & quản lý quyền</p>
           </div>
           {tab === 'metrics' && (
           <div className="flex gap-2">
@@ -224,6 +226,7 @@ export default function AdminRecommenderMetricsPage() {
           ))}
         </div>
 
+        {tab === 'activity' && <AdminActivityPanel />}
         {tab === 'exports' && <AdminExportsPanel />}
         {tab === 'users' && <AdminUsersPanel />}
 
