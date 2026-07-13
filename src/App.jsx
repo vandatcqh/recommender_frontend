@@ -5,7 +5,6 @@ import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import MyRatingsPage from './pages/MyRatingsPage';
 import RecommendationsPage from './pages/RecommendationsPage';
-import AdminExportsPage from './pages/AdminExportsPage';
 import AdminRecommenderPage from './pages/AdminRecommenderPage';
 import AdminRecommenderMetricsPage from './pages/AdminRecommenderMetricsPage';
 import { isAdmin } from './lib/auth';
@@ -66,15 +65,15 @@ export default function App() {
         <Route path="/recommendations" element={<ProtectedRoute><RecommendationsPage /></ProtectedRoute>} />
         <Route
           path="/admin/exports"
-          element={
-            <ProtectedRoute>
-              <AdminExportsPage />
-            </ProtectedRoute>
-          }
+          element={<Navigate to="/admin?tab=exports" replace />}
         />
         <Route
           path="/admin/recommender/:version"
-          element={<AdminRecommenderPage />}
+          element={
+            <AdminRoute>
+              <AdminRecommenderPage />
+            </AdminRoute>
+          }
         />
         <Route
           path="/admin"

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 import {
@@ -9,6 +9,13 @@ import {
 } from '../api';
 import { downloadBlob } from '../lib/auth';
 import AdminUsersPanel from '../components/AdminUsersPanel';
+import AdminExportsPanel from '../components/AdminExportsPanel';
+
+const ADMIN_TABS = [
+  { id: 'metrics', label: '📊 Metrics' },
+  { id: 'exports', label: '📁 Export ratings' },
+  { id: 'users', label: '👥 Quyền admin' },
+];
 
 const METRIC_LABELS = {
   users: 'Người dùng',
@@ -86,7 +93,20 @@ function MetricTable({ title, data, groupHead }) {
 
 export default function AdminRecommenderMetricsPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState('metrics');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab');
+  const [tab, setTab] = useState(
+    ADMIN_TABS.some((t) => t.id === initialTab) ? initialTab : 'metrics',
+  );
+
+  const switchTab = (nextTab) => {
+    setTab(nextTab);
+    if (nextTab === 'metrics') {
+      setSearchParams({}, { replace: true });
+    } else {
+      setSearchParams({ tab: nextTab }, { replace: true });
+    }
+  };
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState('');
@@ -155,7 +175,7 @@ export default function AdminRecommenderMetricsPage() {
           </button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-text m-0">Admin</h1>
-            <p className="text-sm text-muted mt-0.5">Metrics recommender & quản lý quyền admin</p>
+            <p className="text-sm text-muted mt-0.5">Metrics, export ratings & quản lý quyền admin</p>
           </div>
           {tab === 'metrics' && (
           <div className="flex gap-2">
@@ -187,31 +207,24 @@ export default function AdminRecommenderMetricsPage() {
           )}
         </div>
 
-        <div className="flex gap-2 mb-6">
-          <button
-            type="button"
-            onClick={() => setTab('metrics')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold border cursor-pointer transition-colors ${
-              tab === 'metrics'
-                ? 'bg-gradient-to-r from-primary to-secondary text-white border-transparent'
-                : 'bg-white border-border text-text hover:bg-gray-50'
-            }`}
-          >
-            📊 Metrics
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('users')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold border cursor-pointer transition-colors ${
-              tab === 'users'
-                ? 'bg-gradient-to-r from-primary to-secondary text-white border-transparent'
-                : 'bg-white border-border text-text hover:bg-gray-50'
-            }`}
-          >
-            👥 Quyền admin
-          </button>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {ADMIN_TABS.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => switchTab(id)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold border cursor-pointer transition-colors ${
+                tab === id
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white border-transparent'
+                  : 'bg-white border-border text-text hover:bg-gray-50'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
+        {tab === 'exports' && <AdminExportsPanel />}
         {tab === 'users' && <AdminUsersPanel />}
 
         {tab === 'metrics' && (
