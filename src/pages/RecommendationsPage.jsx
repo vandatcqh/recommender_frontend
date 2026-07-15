@@ -43,6 +43,7 @@ export default function RecommendationsPage() {
   const [weather, setWeather] = useState('cold');
   const [loading, setLoading] = useState(false);
   const [hasData, setHasData] = useState(null);
+  const [isPersonalized, setIsPersonalized] = useState(true);
   const [items, setItems] = useState([]);
   const [liked, setLiked] = useState({});
   const [showResult, setShowResult] = useState(false);
@@ -50,8 +51,14 @@ export default function RecommendationsPage() {
 
   useEffect(() => {
     getRecommendationsStatus()
-      .then((res) => setHasData(res.data.has_data))
-      .catch(() => setHasData(false));
+      .then((res) => {
+        setHasData(res.data.has_data);
+        setIsPersonalized(!!res.data.is_personalized);
+      })
+      .catch(() => {
+        setHasData(false);
+        setIsPersonalized(false);
+      });
   }, []);
 
   const baseEvent = (rank, itemId, predRating, action) => ({
@@ -126,9 +133,20 @@ export default function RecommendationsPage() {
           </button>
           <div>
             <h1 className="text-xl font-bold text-text m-0">Gợi ý cho {username}</h1>
-            <p className="text-sm text-muted mt-0.5">Top-30 sản phẩm theo ngữ cảnh</p>
+            <p className="text-sm text-muted mt-0.5">
+              {isPersonalized
+                ? 'Top-30 sản phẩm theo mô hình cá nhân hoá'
+                : 'Top-30 theo dự đoán global (account mới / chưa có dữ liệu)'}
+            </p>
           </div>
         </div>
+
+        {hasData && !isPersonalized && (
+          <div className="mb-4 px-4 py-3 rounded-xl bg-amber-50 border border-amber-100 text-sm text-amber-800">
+            Tài khoản chưa có dữ liệu đánh giá cá nhân — đang dùng gợi ý global (trung bình từ mọi user) làm fallback.
+            Sau khi bạn đánh giá thêm sản phẩm và hệ thống cập nhật dự đoán, gợi ý sẽ cá nhân hoá hơn.
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl border border-border p-6 space-y-5 shadow-sm">
           <div>
@@ -206,7 +224,7 @@ export default function RecommendationsPage() {
 
         {hasData === false && (
           <div className="mt-6 text-center py-10 text-muted">
-            Tài khoản <b>{username}</b> chưa có dữ liệu dự đoán.
+            Hệ thống chưa có dữ liệu dự đoán (cá nhân lẫn global). Vui lòng thử lại sau.
           </div>
         )}
 
@@ -222,6 +240,11 @@ export default function RecommendationsPage() {
               <>
                 <h2 className="text-base font-semibold text-text mb-4">
                   Gợi ý {categoryLabel} ({items.length} sản phẩm)
+                  {!isPersonalized && (
+                    <span className="ml-2 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                      Global fallback
+                    </span>
+                  )}
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {items.map((item) => (
