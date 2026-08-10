@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 const labels = {
-  1: 'Rất không phù hợp',
-  2: 'Không phù hợp',
+  1: 'Hoàn toàn không thích',
+  2: 'Không thích',
   3: 'Bình thường',
-  4: 'Phù hợp',
-  5: 'Rất phù hợp',
+  4: 'Thích',
+  5: 'Rất thích',
 };
 
 export default function StarRating({ value, onChange }) {
@@ -35,7 +35,7 @@ export default function StarRating({ value, onChange }) {
       <p className="text-xs text-muted h-4">
         {display ? labels[display] : (
           <span className="italic">
-            "Rất không phù hợp" ←→ "Rất phù hợp"
+            "Hoàn toàn không thích" ←→ "Rất thích"
           </span>
         )}
       </p>
