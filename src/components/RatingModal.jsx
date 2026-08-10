@@ -168,14 +168,14 @@ export default function RatingModal({ item, onClose, onSuccess }) {
 
           <div className="space-y-6 flex-1">
             <ContextChips
-              label="Dịp sử dụng (hệ thống chọn ngẫu nhiên)"
+              label="Dịp sử dụng"
               options={OCCASION_OPTIONS}
               value={occasion}
               disabled
             />
 
             <ContextChips
-              label="Thời tiết (hệ thống chọn ngẫu nhiên)"
+              label="Thời tiết"
               options={WEATHER_OPTIONS}
               value={weather}
               disabled
