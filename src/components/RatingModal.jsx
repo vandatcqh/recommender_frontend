@@ -41,14 +41,20 @@ const getRandomContext = (exclude = null) => {
   return filtered[Math.floor(Math.random() * filtered.length)];
 };
 
+const getRandomContextPair = () => {
+  const first = getRandomContext();
+  return [first, getRandomContext(first)];
+};
+
 export default function RatingModal({ item, onClose, onSuccess }) {
-  const [occasion, setOccasion] = useState('');
-  const [weather, setWeather] = useState('');
+  const [contexts] = useState(getRandomContextPair);
   const [rating, setRating] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [ratingStep, setRatingStep] = useState(1);
 
-  const isComplete = occasion && weather && rating > 0;
+  const { occasion, weather } = contexts[ratingStep - 1];
+
+  const isComplete = rating > 0;
 
   const handleSubmit = async () => {
     if (!isComplete) return;
@@ -73,14 +79,6 @@ export default function RatingModal({ item, onClose, onSuccess }) {
         return;
       }
 
-      // Random context mới cho lượt thứ 2
-      const nextContext = getRandomContext({
-        occasion,
-        weather,
-      });
-
-      setOccasion(nextContext.occasion);
-      setWeather(nextContext.weather);
       setRating(0);
       setRatingStep(2);
     } catch (err) {
@@ -170,17 +168,17 @@ export default function RatingModal({ item, onClose, onSuccess }) {
 
           <div className="space-y-6 flex-1">
             <ContextChips
-              label="Bạn mặc để đi đâu, làm gì?"
+              label="Dịp sử dụng (hệ thống chọn ngẫu nhiên)"
               options={OCCASION_OPTIONS}
               value={occasion}
-              onChange={setOccasion}
+              disabled
             />
 
             <ContextChips
-              label="Điều kiện thời tiết?"
+              label="Thời tiết (hệ thống chọn ngẫu nhiên)"
               options={WEATHER_OPTIONS}
               value={weather}
-              onChange={setWeather}
+              disabled
             />
 
             <div className="pt-2">
@@ -197,9 +195,7 @@ export default function RatingModal({ item, onClose, onSuccess }) {
           {/* Submit */}
           <div className="mt-8 pt-6 border-t border-border">
             <p className="text-sm text-muted mb-6">
-            {ratingStep === 1
-              ? 'Giúp hệ thống hiểu hơn sở thích của bạn bằng cách đánh giá sản phẩm này ở 1 ngữ cảnh khác✨'
-              : 'Đây là ngữ cảnh được random bởi hệ thống. Bạn có thể điều chỉnh nếu muốn. ✨'}
+              Lượt {ratingStep}/2 · Ngữ cảnh được hệ thống chọn ngẫu nhiên để hạn chế thiên lệch. Bạn chỉ cần chấm mức độ phù hợp của sản phẩm. ✨
             </p>
             <button
               onClick={handleSubmit}
