@@ -27,19 +27,18 @@ const WEATHERS = [
 ];
 
 let sessionSeq = 0;
-const RANDOMIZED_TOP_K = 12;
+const DISPLAY_TOP_K = 20;
 
 function newSessionId(username) {
   sessionSeq += 1;
   return `${username}-${new Date().toISOString().replace(/[:.]/g, '')}-${sessionSeq}`;
 }
 
-function randomizeTopItems(items, limit = RANDOMIZED_TOP_K) {
-  const randomized = [...items];
-  const topCount = Math.min(limit, randomized.length);
+function randomizeTopItems(items, limit = DISPLAY_TOP_K) {
+  const randomized = items.slice(0, limit);
 
-  // Randomize only the display order. Preserve model ranks for MRR events.
-  for (let index = topCount - 1; index > 0; index -= 1) {
+  // Randomize display order only. Preserve model ranks for MRR events.
+  for (let index = randomized.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1));
     [randomized[index], randomized[swapIndex]] = [randomized[swapIndex], randomized[index]];
   }
@@ -149,8 +148,8 @@ export default function RecommendationsPage() {
             <h1 className="text-xl font-bold text-text m-0">Gợi ý cho {username}</h1>
             <p className="text-sm text-muted mt-0.5">
               {isPersonalized
-                ? 'Top-30 sản phẩm theo mô hình cá nhân hoá'
-                : 'Top-30 theo dự đoán global (account mới / chưa có dữ liệu)'}
+                ? 'Top-20 sản phẩm theo mô hình cá nhân hoá'
+                : 'Top-20 theo dự đoán global (account mới / chưa có dữ liệu)'}
             </p>
           </div>
         </div>
