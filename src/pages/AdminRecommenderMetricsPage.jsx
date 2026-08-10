@@ -11,10 +11,12 @@ import { downloadBlob } from '../lib/auth';
 import AdminUsersPanel from '../components/AdminUsersPanel';
 import AdminExportsPanel from '../components/AdminExportsPanel';
 import AdminActivityPanel from '../components/AdminActivityPanel';
+import AdminRecommendationSessionsPanel from '../components/AdminRecommendationSessionsPanel';
 
 const ADMIN_TABS = [
   { id: 'metrics', label: '📊 Metrics' },
   { id: 'activity', label: '📋 Hoạt động user' },
+  { id: 'sessions', label: '✨ Lượt gợi ý theo ngày' },
   { id: 'exports', label: '📁 Export ratings' },
   { id: 'users', label: '👥 Quyền admin' },
 ];
@@ -227,6 +229,7 @@ export default function AdminRecommenderMetricsPage() {
         </div>
 
         {tab === 'activity' && <AdminActivityPanel />}
+        {tab === 'sessions' && <AdminRecommendationSessionsPanel />}
         {tab === 'exports' && <AdminExportsPanel />}
         {tab === 'users' && <AdminUsersPanel />}
 

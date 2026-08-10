@@ -43,7 +43,10 @@ function randomizeTopItems(items, limit = DISPLAY_TOP_K) {
     [randomized[index], randomized[swapIndex]] = [randomized[swapIndex], randomized[index]];
   }
 
-  return randomized;
+  return randomized.map((item, index) => ({
+    ...item,
+    display_rank: index + 1,
+  }));
 }
 
 export default function RecommendationsPage() {
@@ -74,7 +77,7 @@ export default function RecommendationsPage() {
       });
   }, []);
 
-  const baseEvent = (rank, itemId, predRating, action) => ({
+  const baseEvent = (item, action) => ({
     timestamp: new Date().toISOString(),
     session_id: sessionRef.current?.id || '',
     user_id: String(userId),
@@ -82,9 +85,10 @@ export default function RecommendationsPage() {
     category_id: categoryId,
     occasion,
     weather,
-    rank,
-    item_id: itemId,
-    pred_rating: predRating,
+    rank: item.rank,
+    display_rank: item.display_rank,
+    item_id: item.item_id,
+    pred_rating: item.pred_rating,
     action,
   });
 
@@ -104,9 +108,7 @@ export default function RecommendationsPage() {
           items: nextItems,
         };
         logRecommenderEvents(
-          nextItems.map((item) =>
-            baseEvent(item.rank, item.item_id, item.pred_rating, 'impression')
-          )
+          nextItems.map((item) => baseEvent(item, 'impression'))
         );
       } else {
         sessionRef.current = null;
@@ -125,7 +127,7 @@ export default function RecommendationsPage() {
     const nextLiked = !liked[item.item_id];
     setLiked((prev) => ({ ...prev, [item.item_id]: nextLiked }));
     logRecommenderEvents([
-      baseEvent(item.rank, item.item_id, item.pred_rating, nextLiked ? 'like' : 'unlike'),
+      baseEvent(item, nextLiked ? 'like' : 'unlike'),
     ]);
   };
 

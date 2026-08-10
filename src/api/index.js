@@ -66,6 +66,9 @@ export const getAdminUserActivity = () => api.get('/admin/user-activity');
 export const getAdminUserActivityDetail = (params) =>
   api.get('/admin/user-activity/detail', { params });
 
+export const getAdminRecommendationSessions = (date) =>
+  api.get('/admin/recommendation-sessions', { params: { date } });
+
 // --- Admin ---
 export const listRatingFiles = () => api.get('/ratings/files');
 
