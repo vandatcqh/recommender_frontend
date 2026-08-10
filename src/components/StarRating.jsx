@@ -16,7 +16,7 @@ export default function StarRating({ value, onChange }) {
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-text">
-        Mức độ phù hợp trong bối cảnh này?
+        Bạn có muốn mặc sản phẩm này trong hoàn cảnh này không?
       </label>
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (

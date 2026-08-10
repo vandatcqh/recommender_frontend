@@ -188,15 +188,8 @@ export default function RatingModal({ item, onClose, onSuccess }) {
               />
             </div>
           </div>
-          
-
-          
-          
           {/* Submit */}
           <div className="mt-8 pt-6 border-t border-border">
-            <p className="text-sm text-muted mb-6">
-              Lượt {ratingStep}/2 · Ngữ cảnh được hệ thống chọn ngẫu nhiên để hạn chế thiên lệch. Bạn chỉ cần chấm mức độ phù hợp của sản phẩm. ✨
-            </p>
             <button
               onClick={handleSubmit}
               disabled={!isComplete || submitting}
