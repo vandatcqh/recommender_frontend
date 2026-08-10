@@ -12,11 +12,13 @@ import AdminUsersPanel from '../components/AdminUsersPanel';
 import AdminExportsPanel from '../components/AdminExportsPanel';
 import AdminActivityPanel from '../components/AdminActivityPanel';
 import AdminRecommendationSessionsPanel from '../components/AdminRecommendationSessionsPanel';
+import AdminRecommendationPreviewPanel from '../components/AdminRecommendationPreviewPanel';
 
 const ADMIN_TABS = [
   { id: 'metrics', label: '📊 Metrics' },
   { id: 'activity', label: '📋 Hoạt động user' },
   { id: 'sessions', label: '✨ Lượt gợi ý theo ngày' },
+  { id: 'preview', label: '🔎 Xem thử Top-20' },
   { id: 'exports', label: '📁 Export ratings' },
   { id: 'users', label: '👥 Quyền admin' },
 ];
@@ -230,6 +232,7 @@ export default function AdminRecommenderMetricsPage() {
 
         {tab === 'activity' && <AdminActivityPanel />}
         {tab === 'sessions' && <AdminRecommendationSessionsPanel />}
+        {tab === 'preview' && <AdminRecommendationPreviewPanel />}
         {tab === 'exports' && <AdminExportsPanel />}
         {tab === 'users' && <AdminUsersPanel />}
 
