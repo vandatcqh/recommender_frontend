@@ -27,10 +27,24 @@ const WEATHERS = [
 ];
 
 let sessionSeq = 0;
+const RANDOMIZED_TOP_K = 12;
 
 function newSessionId(username) {
   sessionSeq += 1;
   return `${username}-${new Date().toISOString().replace(/[:.]/g, '')}-${sessionSeq}`;
+}
+
+function randomizeTopItems(items, limit = RANDOMIZED_TOP_K) {
+  const randomized = [...items];
+  const topCount = Math.min(limit, randomized.length);
+
+  // Randomize only the display order. Preserve model ranks for MRR events.
+  for (let index = topCount - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [randomized[index], randomized[swapIndex]] = [randomized[swapIndex], randomized[index]];
+  }
+
+  return randomized;
 }
 
 export default function RecommendationsPage() {
@@ -82,7 +96,7 @@ export default function RecommendationsPage() {
 
     try {
       const res = await getRecommendations(categoryId, occasion, weather);
-      const nextItems = res.data || [];
+      const nextItems = randomizeTopItems(res.data || []);
       setItems(nextItems);
 
       if (nextItems.length > 0) {
