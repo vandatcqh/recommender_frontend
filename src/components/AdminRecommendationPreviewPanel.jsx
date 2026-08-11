@@ -120,7 +120,7 @@ export default function AdminRecommendationPreviewPanel() {
           disabled={loading || !username.trim()}
           className="mt-4 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-white text-sm font-semibold border-none cursor-pointer disabled:opacity-50"
         >
-          {loading ? 'Đang tải…' : 'Xem Top-20 thật sự'}
+          {loading ? 'Đang tải…' : 'Xem toàn bộ ranking'}
         </button>
         <p className="text-xs text-muted mt-3 mb-0">
           Chế độ admin chỉ đọc: chỉ hiện sản phẩm user chưa đánh giá trong context đã chọn,
@@ -137,7 +137,9 @@ export default function AdminRecommendationPreviewPanel() {
       {result && (
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <h2 className="text-base font-semibold text-text m-0">Top-20 của {result.username}</h2>
+            <h2 className="text-base font-semibold text-text m-0">
+              Toàn bộ ranking của {result.username} ({result.items.length} sản phẩm)
+            </h2>
             <span className="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 text-xs font-medium">
               {result.source === 'personal' ? 'Cá nhân hóa' : 'Global fallback'}
             </span>
