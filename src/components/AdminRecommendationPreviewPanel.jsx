@@ -123,7 +123,8 @@ export default function AdminRecommendationPreviewPanel() {
           {loading ? 'Đang tải…' : 'Xem Top-20 thật sự'}
         </button>
         <p className="text-xs text-muted mt-3 mb-0">
-          Chế độ admin chỉ đọc: giữ nguyên rank model, không xáo và không ghi tracking.
+          Chế độ admin chỉ đọc: chỉ hiện sản phẩm user chưa đánh giá trong context đã chọn,
+          giữ nguyên rank model, không xáo và không ghi tracking.
         </p>
       </form>
 
@@ -171,7 +172,9 @@ export default function AdminRecommendationPreviewPanel() {
               </tbody>
             </table>
             {result.items.length === 0 && (
-              <div className="p-10 text-center text-muted text-sm">Không có prediction cho lựa chọn này.</div>
+              <div className="p-10 text-center text-muted text-sm">
+                Không còn sản phẩm chưa đánh giá trong context này hoặc chưa có prediction phù hợp.
+              </div>
             )}
           </div>
         </div>
