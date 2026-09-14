@@ -1,4 +1,5 @@
-const TARGET = (process.env.API_PROXY_TARGET || 'http://3.26.158.53:8000').replace(/\/$/, '');
+// Committed so a GitHub push updates the Vercel proxy even if dashboard env is stale.
+const TARGET = 'http://3.145.13.13:8000';
 
 export default async function handler(req, res) {
   const rawPath = req.query.path;

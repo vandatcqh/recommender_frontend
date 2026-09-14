@@ -17,7 +17,7 @@ Serverless proxy (`api/[...path].js`) hỗ trợ POST (đăng nhập, đăng ký
 
 ```bash
 # Trên server backend
-curl http://32.236.189.44:8000/api/health
+curl http://3.145.13.13:8000/api/health
 # → {"status":"ok"}
 ```
 
@@ -37,7 +37,7 @@ curl http://32.236.189.44:8000/api/health
 
 | Name | Value |
 |---|---|
-| `API_PROXY_TARGET` | `http://32.236.189.44:8000` |
+| `API_PROXY_TARGET` | `http://3.145.13.13:8000` |
 
 ### 4. Deploy
 
