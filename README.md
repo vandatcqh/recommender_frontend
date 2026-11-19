@@ -36,4 +36,4 @@ src/
 
 ## Backend
 
-Repo backend riêng: [KLTN](https://github.com/ttv0708/KLTN) (server `3.145.13.13:8000`).
+Repo backend riêng: [KLTN](https://github.com/ttv0708/KLTN) (server `180.93.127.117:8000`).
